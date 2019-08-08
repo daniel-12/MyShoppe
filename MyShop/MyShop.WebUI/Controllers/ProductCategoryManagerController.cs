@@ -1,41 +1,35 @@
-﻿using System;
+﻿using MyShop.Core.Models;
+using MyShop.DataAccess.InMemory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MyShop.Core.Models;
-using MyShop.Core.ViewModels;
-using MyShop.DataAccess.InMemory;
 
 namespace MyShop.WebUI.Controllers
 {
-    public class ProductManagerController : Controller
+    public class ProductCategoryManagerController : Controller
     {
-        ProductRepository context;
-        ProductCategoryRepository productCategories;
+        ProductCategoryRepository context;
 
-        public ProductManagerController()
+        public ProductCategoryManagerController()
         {
-            context = new ProductRepository();
-            productCategories = new ProductCategoryRepository(); // refering to the repository?
+            context = new ProductCategoryRepository();
         }
 
         public ActionResult Index()
         {
-            List<Product> products = context.Collection().ToList();
+            List<ProductCategory> products = context.Collection().ToList();
             return View(products);
         }
 
         public ActionResult Create()
         {
-            ProductManagerViewModel viewModel = new ProductManagerViewModel();
-
-            viewModel.Product = new Product();
-            viewModel.ProductCategories = productCategories.Collection();
-            return View(viewModel);
+            ProductCategory product = new ProductCategory();
+            return View(product);
         }
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(ProductCategory product)
         {
             if (!ModelState.IsValid)  // this checks that all validations check out otherwise reload the page with the error messages.
             {
@@ -51,38 +45,33 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Edit(string id)
         {
-            Product product = context.Find(id);
+            ProductCategory product = context.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
             else
             {
-                ProductManagerViewModel viewModel = new ProductManagerViewModel();
-                viewModel.Product = product;
-                viewModel.ProductCategories = productCategories.Collection();
-                return View(viewModel);
+                return View(product);
             }
         }
         [HttpPost]
-        public ActionResult Edit(Product product, string id)
+        public ActionResult Edit(ProductCategory product, string id)
         {
-            Product productToEdit = context.Find(id);
+            ProductCategory productToEdit = context.Find(id);
             if (productToEdit == null)
             {
                 return HttpNotFound();
             }
             else
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     return View(product);
                 }
                 productToEdit.Category = product.Category;
-                productToEdit.Description = product.Description;
-                productToEdit.Image = product.Image;
-                productToEdit.Name = product.Name;
-                productToEdit.Price = product.Price;
+                productToEdit.ID = product.ID;
+
 
                 context.Commit();
                 return RedirectToAction("Index");
@@ -92,7 +81,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Delete(string id)
         {
-            Product productToDelete = context.Find(id);
+            ProductCategory productToDelete = context.Find(id);
 
             if (productToDelete == null)
             {
@@ -107,7 +96,7 @@ namespace MyShop.WebUI.Controllers
         [HttpPost]
         public ActionResult ConfirmDelete(string id)
         {
-            Product productToDelete = context.Find(id);
+            ProductCategory productToDelete = context.Find(id);
 
             if (productToDelete == null)
             {
