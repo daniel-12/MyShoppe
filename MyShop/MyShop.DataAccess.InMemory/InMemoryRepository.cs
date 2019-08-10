@@ -6,9 +6,9 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyShop.DataAccess.InMemory
-{
-    public class InMemoryRepository<T> where T: BaseEntity  // T is an argument that must inherit from BaseEntity.
+namespace MyShop.Core.Contracts
+{           // T is an argument that must inherit from BaseEntity. We have an interface.
+    public class InMemoryRepository<T> : IRepository<T> where T : BaseEntity  
     {
         ObjectCache cache = MemoryCache.Default;
         List<T> items;
@@ -18,7 +18,7 @@ namespace MyShop.DataAccess.InMemory
         {
             className = typeof(T).Name;
             items = cache[className] as List<T>;  // putting "T" in list to check if empty.
-            if (items == null )
+            if (items == null)
             {
                 items = new List<T>();
             }
@@ -26,7 +26,7 @@ namespace MyShop.DataAccess.InMemory
 
         public void Commit()
         {
-            cache[className] = items;  
+            cache[className] = items;
         }
 
         public void Insert(T t)
@@ -61,12 +61,12 @@ namespace MyShop.DataAccess.InMemory
             }
         }
 
-        public IQueryable<T>Collection()
+        public IQueryable<T> Collection()
         {
             return items.AsQueryable();
         }
 
-        public void Delete(string Id )
+        public void Delete(string Id)
         {
             T tToDelete = items.Find(i => i.ID == Id);
 

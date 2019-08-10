@@ -5,19 +5,19 @@ using System.Web;
 using System.Web.Mvc;
 using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
-using MyShop.DataAccess.InMemory;
+using MyShop.Core.Contracts;
 
 namespace MyShop.WebUI.Controllers
 {
     public class ProductManagerController : Controller
-    {
-        InMemoryRepository<Product> context;
-        InMemoryRepository<ProductCategory> productCategories;
-
-        public ProductManagerController()
+    {// using the interface with the classes signatures. Declaration. 
+        IRepository<Product> context;
+        IRepository<ProductCategory> productCategories;
+        // passing interfaces into the constructor.
+        public ProductManagerController(IRepository<Product> productContext, IRepository<ProductCategory> productCategoryContext)
         {
-            context = new InMemoryRepository<Product>();
-            productCategories = new InMemoryRepository<ProductCategory>(); // refering to the repository?
+            context = productContext;
+            productCategories = productCategoryContext; 
         }
 
         public ActionResult Index()
